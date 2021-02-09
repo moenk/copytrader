@@ -5,12 +5,17 @@ import pyperclip
 import tempfile
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
+
 
 
 def wikifolio_browser_aufmachen():
     time.sleep(3)
     chromeService = webdriver.chrome.service.Service(executable_path='c:/webdriver/chromedriver.exe')
     chromeOptions = webdriver.ChromeOptions()
+    userdatadir = tempfile.gettempdir() + os.sep + "wikifolio"
+    print("User Data Dir:", userdatadir)
+    chromeOptions.add_argument("user-data-dir=" + userdatadir)
     chromeOptions.add_argument("--no-sandbox")
     chromeOptions.add_argument("--disable-dev-shm-usage")
     chromeOptions.add_argument("--start-maximized")
@@ -19,24 +24,27 @@ def wikifolio_browser_aufmachen():
 
 
 def wikifolio_login(driver, wf_username, wf_password):
-    pyautogui.moveTo(x=100,y=100)
     driver.get("https://www.wikifolio.com")
-    pyautogui.moveTo(x=250,y=250,duration=2)
-    driver.find_element_by_xpath("//div[text()='Einverstanden']").click()
-    time.sleep(1)
-    driver.find_element_by_xpath("//button[@class='c-btn c-btn-link c-btn-link--grey-fossil js-login-button u-ml-3 gtm-nav-menu__login']").click()
-    time.sleep(1)
-    driver.find_element_by_xpath("//input[@id='Username']").click()
-    driver.find_element_by_xpath("//input[@id='Username']").send_keys(wf_username)
-    time.sleep(2)
-    pyperclip.paste()
-    time.sleep(1)
-    pyautogui.hotkey("tab")
-    time.sleep(1)
-    pyautogui.typewrite(wf_password)
-    time.sleep(1)
-    pyautogui.hotkey("enter")
-    time.sleep(5)
+    coords = pyautogui.locateCenterOnScreen('but_login.png')
+    try:
+        pyautogui.moveRel(x=10, y=10)
+        time.sleep(1)
+        driver.find_element_by_xpath("//div[text()='Einverstanden']").click()
+        time.sleep(1)
+    except:
+        pass
+    if coords != None:
+        pyperclip.copy(wf_username)
+        pyautogui.click(coords)
+        time.sleep(5)
+        pyautogui.hotkey("ctrl", "v")
+        time.sleep(1)
+        pyautogui.hotkey("tab")
+        time.sleep(1)
+        pyautogui.typewrite(wf_password)
+        time.sleep(1)
+        pyautogui.hotkey("enter")
+        time.sleep(1)
 
 
 def parse_portfolio(driver, portfolio, wf_dataframe):

@@ -1,7 +1,7 @@
 import os
 import tempfile
 import wikifolio
-import onvista # +49 (0)69 7107-555
+import onvista
 import pandas as pd
 import configparser
 import colorama
@@ -72,8 +72,6 @@ print(ov_dataframe)
 wf_dataframe = pd.read_csv(wf_datei)
 print(wf_dataframe)
 
-exit(1)
-
 # Verkaufen durchfuehren
 print("\n*** Abwicklung Verkauf")
 for index, row in ov_dataframe.iterrows():
@@ -90,6 +88,7 @@ for index, row in wf_dataframe.iterrows():
     wf_isin = row['isin']
     found = len(ov_dataframe[ov_dataframe['ISIN'] == wf_isin])
     if found == 0:
+        exit(1)
         print(colorama.Fore.LIGHTGREEN_EX, "Kaufen:",wf_isin, colorama.Style.RESET_ALL)
         onvista.onvista_close_all(driver)
         onvista.onvista_kaufen(driver, wf_isin, ov_betrag)
