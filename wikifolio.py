@@ -5,8 +5,6 @@ import pyperclip
 import tempfile
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.common.action_chains import ActionChains
-
 
 
 def wikifolio_browser_aufmachen():
@@ -45,6 +43,10 @@ def wikifolio_login(driver, wf_username, wf_password):
         time.sleep(1)
         pyautogui.hotkey("enter")
         time.sleep(1)
+    # fertig eingeloggt?
+    el_login = driver.find_elements_by_xpath("//span[text()='Login']")
+    if len(el_login) > 0:
+        raise Exception("Wikifolio Login")
 
 
 def parse_portfolio(driver, portfolio, wf_dataframe):

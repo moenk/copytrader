@@ -43,7 +43,7 @@ for portfolio in portfolios:
 
 # aggregieren der isin und anteile summieren
 wf_dataframe = wf_dataframe.groupby("isin").sum()
-wf_dataframe = wf_dataframe[wf_dataframe['perc'] >= 5.0]
+# wf_dataframe = wf_dataframe[wf_dataframe['perc'] >= 5.0]
 wf_dataframe = wf_dataframe.sort_values(by='perc', ascending=False)
 
 # und ausgabe
@@ -76,24 +76,30 @@ print(wf_dataframe)
 print("\n*** Abwicklung Verkauf")
 for index, row in ov_dataframe.iterrows():
     ov_isin = row['ISIN']
-    found = len(wf_dataframe[wf_dataframe['isin'] == ov_isin])
-    if found == 0:
-        print(colorama.Fore.LIGHTRED_EX, "Verkaufen:", ov_isin, row['Name'], row['Bestand'], colorama.Style.RESET_ALL)
+    ov_anzahl = int(row['Bestand'])
+    found = wf_dataframe[wf_dataframe['isin'] == ov_isin]
+    if (len(found) == 0) or (float(found['perc']) < 3.0):
+        print(colorama.Fore.LIGHTRED_EX, "Verkaufen:", ov_isin, row['Name'], ov_anzahl, colorama.Style.RESET_ALL)
+        # onvista.onvista_close_all(driver)
+        # onvista.onvista_kaufen(driver, ov_isin, ov_anzahl)
     else:
-        print(colorama.Fore.LIGHTYELLOW_EX, "Halten:", ov_isin, row['Name'], row['Bestand'], colorama.Style.RESET_ALL)
+        print(colorama.Fore.LIGHTYELLOW_EX, "Halten:", ov_isin, row['Name'], ov_anzahl, colorama.Style.RESET_ALL)
 
 # Kaufen durchfuehren
 print("\n*** Abwicklung Kauf")
 for index, row in wf_dataframe.iterrows():
     wf_isin = row['isin']
-    found = len(ov_dataframe[ov_dataframe['ISIN'] == wf_isin])
-    if found == 0:
-        exit(1)
-        print(colorama.Fore.LIGHTGREEN_EX, "Kaufen:",wf_isin, colorama.Style.RESET_ALL)
-        onvista.onvista_close_all(driver)
-        onvista.onvista_kaufen(driver, wf_isin, ov_betrag)
+    wf_perc = row['perc']
+    if wf_perc >= 5.0:
+        found = ov_dataframe[ov_dataframe['ISIN'] == wf_isin]
+        if len(found) == 0:
+            print(colorama.Fore.LIGHTGREEN_EX, "Kaufen:",wf_isin, colorama.Style.RESET_ALL)
+            # onvista.onvista_close_all(driver)
+            # onvista.onvista_kaufen(driver, wf_isin, ov_betrag)
+        else:
+            print(colorama.Fore.LIGHTYELLOW_EX, "Halten:",wf_isin, colorama.Style.RESET_ALL)
     else:
-        print(colorama.Fore.LIGHTYELLOW_EX, "Halten:",wf_isin, colorama.Style.RESET_ALL)
+        print("Ignoriert:", wf_isin)
 
 # und onvista schliessen
 driver.close()

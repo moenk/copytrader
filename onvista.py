@@ -67,6 +67,7 @@ def onvista_download_depot(driver, ov_file):
     time.sleep(5)
     try:
         driver.find_element_by_xpath("//button[@ng-show='paginationData.displayShowAllButton']").click()
+        time.sleep(3)
     except:
         pass
     driver.find_element_by_xpath("//div[@class='dropdown dropdown-boxmenu']").click()
