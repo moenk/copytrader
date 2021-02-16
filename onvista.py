@@ -27,6 +27,7 @@ def wait_for_xpath_element(driver, xpathstr):
         time.sleep(1)
     return el
 
+
 def onvista_browser_aufmachen():
     time.sleep(3)
     chromeService = webdriver.chrome.service.Service(executable_path='c:/webdriver/chromedriver.exe')
@@ -77,7 +78,7 @@ def onvista_download_depot(driver, ov_file):
     pyautogui.write(ov_file)
     time.sleep(3)
     pyautogui.hotkey('enter')
-    time.sleep(3)
+    time.sleep(5)
 
 
 def onvista_close_all(driver):

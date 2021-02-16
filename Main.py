@@ -9,7 +9,7 @@ import colorama
 
 # Const
 ov_betrag = 1200
-wf_portfolios = "wf00bb1912,wf0stwtech"
+wf_portfolios = "wf00bb1912,wf0stwtech,wfchinatec"
 
 
 # config einlesen
@@ -43,7 +43,6 @@ for portfolio in portfolios:
 
 # aggregieren der isin und anteile summieren
 wf_dataframe = wf_dataframe.groupby("isin").sum()
-# wf_dataframe = wf_dataframe[wf_dataframe['perc'] >= 5.0]
 wf_dataframe = wf_dataframe.sort_values(by='perc', ascending=False)
 
 # und ausgabe
@@ -80,8 +79,8 @@ for index, row in ov_dataframe.iterrows():
     found = wf_dataframe[wf_dataframe['isin'] == ov_isin]
     if (len(found) == 0) or (float(found['perc']) < 3.0):
         print(colorama.Fore.LIGHTRED_EX, "Verkaufen:", ov_isin, row['Name'], ov_anzahl, colorama.Style.RESET_ALL)
-        # onvista.onvista_close_all(driver)
-        # onvista.onvista_kaufen(driver, ov_isin, ov_anzahl)
+        onvista.onvista_close_all(driver)
+        onvista.onvista_kaufen(driver, ov_isin, ov_anzahl)
     else:
         print(colorama.Fore.LIGHTYELLOW_EX, "Halten:", ov_isin, row['Name'], ov_anzahl, colorama.Style.RESET_ALL)
 
@@ -90,12 +89,12 @@ print("\n*** Abwicklung Kauf")
 for index, row in wf_dataframe.iterrows():
     wf_isin = row['isin']
     wf_perc = row['perc']
-    if wf_perc >= 5.0:
+    if wf_perc > 5.0:
         found = ov_dataframe[ov_dataframe['ISIN'] == wf_isin]
         if len(found) == 0:
             print(colorama.Fore.LIGHTGREEN_EX, "Kaufen:",wf_isin, colorama.Style.RESET_ALL)
-            # onvista.onvista_close_all(driver)
-            # onvista.onvista_kaufen(driver, wf_isin, ov_betrag)
+            onvista.onvista_close_all(driver)
+            onvista.onvista_kaufen(driver, wf_isin, ov_betrag)
         else:
             print(colorama.Fore.LIGHTYELLOW_EX, "Halten:",wf_isin, colorama.Style.RESET_ALL)
     else:
